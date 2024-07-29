@@ -1,5 +1,7 @@
 clear all;close all;clc
-fname='cmems_mod_glo_phy_my_0.083deg_P1D-m_1716049535443.nc';
+% fname='cmems_mod_glo_phy_my_0.083deg_P1D-m_1716049535443.nc';
+fname='CMEMS2.nc';
+
 ncdisp(fname,'/','full')
 [lon,lat,uu,vv,zos]=read_CMEMS(fname)
 [lon1,lat1]=meshgrid(lon,lat);
@@ -23,14 +25,15 @@ subplot(2,2,3)
 quiver(lon2,lat2,u2,v2,'k');hold on;
 quiver(lon2,lat2,u0c,v0c,'b');
 R = corr2([u2;v2], [u0c;v0c])
-text(119,24.3,['R=',num2str(R)],'fontweight','b')
+% text(119,24.3,['R=',num2str(R)],'fontweight','b')
+text(119.4,24.65,['R=',num2str(R)],'fontweight','b')
 set(gca,'fontweight','b')
 
 
 
 
 
-avisofname='AVISO.nc'
+avisofname='AVISO2.nc'
 ncdisp(avisofname,'/','full')
 
 [lona,lata,ugos,vgos,sla]=read_AVISO(avisofname);
@@ -55,5 +58,8 @@ subplot(2,2,4)
 quiver(lon2,lat2,u2,v2,'k');hold on;
 quiver(lon2,lat2,u0a,v0a,'b');
 R = corr2([u2;v2], [u0a;v0a])
-text(119,24.3,['R=',num2str(R)],'fontweight','b')
+% text(119,24.3,['R=',num2str(R)],'fontweight','b')
+text(119.4,24.65,['R=',num2str(R)],'fontweight','b')
+
 set(gca,'fontweight','b')
+saveas(gcf,'Related_AVISO_CMEMS2','png')

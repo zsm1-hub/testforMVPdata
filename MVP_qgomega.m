@@ -30,8 +30,12 @@ clear all;close all;clc
 f=gsw_f(24.4);g=9.8;
 load mvppos.mat
 load mvpadcp.mat
-xrange=40:431;
-yrange=13:82;
+%for ED
+% xrange=40:431;
+% yrange=13:82;
+% for FG
+xrange=125:365;
+yrange=15:82;
 dx=abs(Ds_low(1,2)-Ds_low(1,1)).*1e3;
 dz=abs(De_low(2,1)-De_low(1,1));
 %%%%%假设混合层内地转流均一
@@ -52,9 +56,11 @@ Ri=(N2.*f.^2)./(bx.^2);
 Nthreshold=min(abs(N2(:)));
 N2(N2==0)=Nthreshold;
 N2(N2<0)=Nthreshold;
-wqg=alongtrack_QGomega_MVP(u,b,N2,f,dx,dz,4000,1e-8);
+wqg=alongtrack_QGomega_MVP(u,b,N2,f,dx,dz,10000,1e-8);
 
-
+% a=b(yrange,xrange);
+a=u;
+mean(a(:))
 % contourf(Ds_low,De_low,Q)
 % contourf(Ds_low,De_low,PotDen_low)
 
@@ -101,13 +107,20 @@ title('rho');
 Ri(Ri<0)=0.25;
 target4=subplot(2,3,4)
 
-pcolor(Ds_low,De_low,log(Ri));shading interp;colorbar;hold on
+Ri1=Ri;
+Ri1(Ri<=0)=0.25;Ri1(Ri<=0.25&&Ri>0)=0.5;Ri1(Ri>0.25&&Ri<=0.75)=0.75;Ri1(Ri>0.75)=1;
+map = [1 0 0; 1 1 0; 0 0 1; 0 1 0];
+% pcolor(Ds_low,De_low,log(Ri));shading interp;colorbar;hold on
+pcolor(Ds_low,De_low,Ri1);shading interp;colorbar;hold on
+
 % colortable = textread('GMT_polar.txt');
 colortable = textread('matlab_hsv.txt');
 contour(Ds_low,De_low,PotDen_low,[23.7,23.9,24],'color','k','linewi',2);
 contour(Ds_low,De_low,log(Ri),[log(0.25) log(0.25)],'color','w','linewi',1);
 colormap(target4,colortable)
-caxis([log(0.24) 2])
+colormap(target4,flipud(map))
+% caxis([log(0.24) 2])
+caxis([0 1])
 title('Ri');
 
 scale=Ri.^(-0.5);
@@ -153,7 +166,7 @@ colortable = textread('MPL_RdYlGn.txt');
 colormap(target6,flipud(colortable))
 caxis([-1e-11 1e-11])
 title('buoyancy flux cross-spectrum');
-
+saveas(gcf,'taiwanmvp2','png')
 % bf1zavg=mean(bf1,1);
 % plot(kx2,bf1zavg);
 % set(gca,'Xscale','log')
