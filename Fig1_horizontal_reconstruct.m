@@ -11,7 +11,8 @@ addpath('D:\mmap\m_map')
 % load zsmmvp1.mat
 % load zsmmvp2.mat
 load ADCPzsm.mat
-load W116E124S22N30_20190310T2100Z.mat 
+% load W116E124S22N30_20190310T2100Z.mat 
+load W116E124S22N30_20190311T0000Z.mat
 load mvplonlat.mat
 lon_AB=fliplr(lon_AB);lat_AB=fliplr(lat_AB);
 lon_CD=fliplr(lon_CD);lat_CD=fliplr(lat_CD);
@@ -34,7 +35,8 @@ m_proj('mercator','lon',[lona lonb],'lat',[lata latb]);
 m_pcolor(lonr,latr,temp1);shading interp;
 c=colorbar;
 set(get(c,'title'),'string','\circC')
-colortable=textread('thelix.txt');
+% colortable=textread('thelix.txt');
+colortable=textread('MPL_gnuplot.txt');
 colormap(colortable);
 m_line(lon_AB,lat_AB,'color','m','linewi',1.5);
 m_line(lon_CD,lat_CD,'color','m','linewi',1.5);
@@ -50,7 +52,7 @@ m_line([lonr(J_range(1),I_range(1)),lonr(J_range(end),I_range(1)),...
 m_grid('box','off','linestyle','none','fontsize',12,'FontWeight','b');
 title('SST');
 set(gca,'fontsize',12,'FontWeight','b')
-
+saveas(gcf,'fig1_large_sst','png')
 
 %% salt
 % f2=subplot(2,2,2)
