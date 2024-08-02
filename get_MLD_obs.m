@@ -25,3 +25,11 @@ end
     MLDmix(:,ii)=min([MLDt(:,ii),MLDr(:,ii)]);
     end
 return
+
+% for ii=1:size(salt2,2)
+%     a1=~isnan(temp2(:,ii));
+%     T2=temp2(:,ii);S2=salt2(:,ii);Z2=z2(:,ii);
+%     T3=T2(a1);S3=S2(a1);z=Z2(a1);
+% 
+% mld(ii)=ra_mld(S2,T2,Z2,0.2)
+% end
