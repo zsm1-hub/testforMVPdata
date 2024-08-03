@@ -26,7 +26,7 @@ dbdz=v2rho_2d(((rho(1:end-1,:)-rho(2:end,:))./abs(dz))*-g./1025);
 %%%thermal wind
 
 
-%% 粗化
+%% CD粗化
 xres=500;zres=-2;
 xdot=abs(xres)./100;
 zdot=abs(zres)./0.5;
@@ -335,4 +335,226 @@ max(dbdx2(:))
 max(dbdz2(:))
 
 save('categories.mat','mask_s_front_AB','mask_t_front_AB','mask_transion_AB',...
+    'mask_t_front_CD','mask_s_front_CD','mask_transion_CD');
+
+%% 原始分类
+%% CD原始
+clear all;close all;clc
+addpath(genpath('E:\ROMS学习\download_data_process\submeso\analysis\GSW\seawater\seawater'));
+addpath('F:\TWS_Acrobat\TWS_Acrobat\TWS_Acrobat\')
+addpath('E:\ROMS学习\download_data_process\submeso\initial')
+addpath('E:\ROMS学习\download_data_process\submeso\analysis\taiwan')
+% addpath('E:\ROMS学习\download_data_process\colorbar\colorbar_NCL\colorbar_NCL')
+addpath('D:\colorbar\colorbar_NCL');
+load zsmmvp1.mat
+% load zsmmvp2.mat
+load ADCPzsm.mat
+load categories.mat
+
+%%%%1是CD/FG，2是AB/DE
+
+dx=abs(x(1,1)-x(1,2)).*1e3;
+dz=abs(z(2,1)-z(1,1));
+g=9.81;
+%% 原始一阶
+figure;
+left=0.15;
+bot=0.8;
+width=0.8;
+height=0.17;
+zpos=0.18;
+pycnal=0.1;
+% 创建第一个坐标系
+load mld.mat;
+mld=mld_CD;
+
+
+mask1=abs(rho-24.1)<pycnal/1;
+%%补充
+mask1(1:11,203:218)=1;
+
+f1=axes('Position', [left, bot, width, height]); % 左下角坐标 (0.1, 0.7)，宽度和高度各为 0.25
+pcolor(x,z,temp);shading interp;colorbar;hold on;
+contour(x,z,rho,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color','k');
+contour(x,z,rho,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color','k');
+
+% contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','--','color',colorcon);
+plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5);
+colortable=textread('MPL_gnuplot.txt');
+colormap(f1,colortable);
+c=colorbar;
+set(c,'ytick',[15 18 21])
+caxis([13 23])
+ylabel('depth [m]');
+text(1.5,-50,'T')
+text(17,5,'Transect CD','FontWeight','b')
+text(5,-20,'S front','FontWeight','b')
+text(12,-35,'transion zone','FontWeight','b')
+text(30,-20,'T front','FontWeight','b')
+set(gca,'xtick',[],'ytick',[-50 -30 -10])
+set(gca,'fontsize',10,'fontweight','b');
+
+
+
+f2=axes('Position', [left, bot-zpos*1, width, height]); 
+pcolor(x,z,double(mask1));shading interp;colorbar;hold on;
+contour(x,z,rho,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color','k');
+% contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','--','color',colorcon);
+
+plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5);
+colortable=textread('MPL_YlGnBu.txt');
+colormap(f2,flipud(colortable));
+caxis([0 1])
+ylabel('depth [m]');
+text(1.5,-50,'S')
+c=colorbar;
+% set(c,'ytick',[31 32.2 33.4])
+set(gca,'xtick',[],'ytick',[-50 -30 -10])
+set(gca,'fontsize',10,'fontweight','b');
+
+
+% f2=axes('Position', [left, bot-zpos*1, width, height]); 
+% pcolor(x,z,salt);shading interp;colorbar;hold on;
+% contour(x,z,rho,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color','k');
+% % contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','--','color',colorcon);
+% 
+% plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5);
+% colortable=textread('MPL_YlGnBu.txt');
+% colormap(f2,flipud(colortable));
+% caxis([30 34.8])
+% ylabel('depth [m]');
+% text(1.5,-50,'S')
+% c=colorbar;
+% % set(c,'ytick',[31 32.2 33.4])
+% set(gca,'xtick',[],'ytick',[-50 -30 -10])
+% set(gca,'fontsize',10,'fontweight','b');
+
+
+f3=axes('Position', [left, bot-zpos*2, width, height]); 
+pcolor(x,z,rho);shading interp;colorbar;hold on;
+contour(x,z,rho,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color','k');
+% contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','--','color',colorcon);
+
+plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5);
+colortable=textread('matlab_jet.txt');
+colormap(f3,colortable);
+% caxis([22.5 24])
+caxis([23 24.5])
+c=colorbar;
+set(c,'ytick',[23.5 24])
+ylabel('depth [m]');
+text(1.5,-50,'\sigma')
+set(gca,'xtick',[],'ytick',[-50 -30 -10])
+set(gca,'fontsize',10,'fontweight','b');
+
+
+f4=axes('Position', [left, bot-zpos*3, width, height]); 
+pcolor(x,z,uacross_CD1);shading interp;colorbar;hold on;
+contour(x,z,rho,[22.5:0.1:24],'linewi',.5,'linestyle','-','color','k');
+contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','--','color',colorcon);
+plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5);
+colortable=textread('MPL_RdBu.txt');
+colormap(f4,flipud(colortable));
+caxis([-.5 .5])
+ylabel('depth [m]');
+text(1.5,-50,'Vel_cross','interpreter','none')
+set(gca,'xtick',[],'ytick',[-50 -30 -10])
+set(gca,'fontsize',10,'fontweight','b');
+
+
+f5=axes('Position', [left, bot-zpos*4, width, height]); 
+pcolor(x,z,ualong_CD1);shading interp;colorbar;hold on;
+contour(x,z,rho,[22.5:0.1:24],'linewi',.5,'linestyle','-','color','k');
+contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','--','color',colorcon);
+plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5);
+colortable=textread('MPL_RdBu.txt');
+colormap(f5,flipud(colortable));
+caxis([-.5 .5])
+h = xlabel('km');
+set(h, 'Position', [20, -65, -0.5], 'Units', 'normalized');
+ylabel('depth [m]');
+text(1.5,-50,'Vel_along','interpreter','none')
+set(gca,'ytick',[-50 -30 -10],'xtick',[0 10 20 30 40])
+set(gca,'fontsize',10,'fontweight','b');
+
+%%% 分离区域完成
+mask_s_front=NaN.*mask1;mask_t_front=NaN.*mask1;
+for ii=1:size(z,1)
+    a=mask1(ii,:);
+    mask_s_front(ii,1:min(find(a==1)))=1;
+    mask_t_front(ii,max(find(a==1)):end)=1;
+end
+mask_transion=double(mask1);mask_transion(mask_transion==0)=nan;
+
+
+%%test zone
+f3=axes('Position', [left, bot-zpos*2, width, height]); 
+pcolor(x,z,mask_transion);shading interp;colorbar;hold on;
+contour(x,z,rho,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color',colorcon,...
+    'showtext','on');
+plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5)
+colortable=textread('MPL_BuGn.txt');
+colormap(f3,colortable);
+% caxis([22.5 24])
+caxis([0 1])
+c=colorbar;
+set(c,'ytick',[0.25 1])
+ylabel('depth [m]');
+text(1.5,-50,'Ri_{g}')
+set(gca,'ytick',[-50 -30 -10],'xtick',[0 10 20 30 40])
+set(gca,'fontsize',10,'fontweight','b');
+
+mask_transion_CD=mask_transion;
+mask_t_front_CD=mask_t_front;
+mask_s_front_CD=mask_s_front;
+
+%% 原始AB
+clf
+load zsmmvp2.mat
+figure;
+left=0.15;
+bot=0.8;
+width=0.8;
+height=0.17;
+zpos=0.18;
+mld=mld_AB;
+mask1=abs(rho-24.2)<pycnal/1;
+%%补充
+mask1(1:11,241:317)=1;
+
+
+f2=axes('Position', [left, bot-zpos*1, width, height]); 
+pcolor(x,z,double(mask1));shading interp;colorbar;hold on;
+contour(x,z,rho,[22.5:0.15:24],'linewi',.5,'linestyle','-','color','k');
+colortable=textread('MPL_YlGnBu.txt');
+colormap(f2,flipud(colortable));
+caxis([0 1])
+ylabel('depth [m]');
+text(1.5,-50,'S')
+c=colorbar;
+% set(c,'ytick',[31 32.2 33.4])
+set(gca,'xtick',[],'ytick',[-50 -30 -10])
+set(gca,'fontsize',10,'fontweight','b');
+
+
+
+
+%%% 分离区域完成
+mask_s_front=NaN.*mask1;mask_t_front=NaN.*mask1;
+for ii=1:size(z,1)
+    a=mask1(ii,:);
+    mask_s_front(ii,1:min(find(a==1)))=1;
+    mask_t_front(ii,max(find(a==1)):end)=1;
+end
+mask_transion=double(mask1);mask_transion(mask_transion==0)=nan;
+
+
+mask_transion_AB=mask_transion;
+mask_t_front_AB=mask_t_front;
+mask_s_front_AB=mask_s_front;
+
+max(dbdx2(:))
+max(dbdz2(:))
+
+save('categories_ori.mat','mask_s_front_AB','mask_t_front_AB','mask_transion_AB',...
     'mask_t_front_CD','mask_s_front_CD','mask_transion_CD');
