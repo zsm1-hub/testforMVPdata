@@ -8,6 +8,8 @@ addpath('D:\colorbar\colorbar_NCL');
 load zsmmvp1.mat
 % load zsmmvp2.mat
 load ADCPzsm.mat
+load categories.mat
+
 %%%%1是CD/FG，2是AB/DE
 alpha=1.7e-4;
 beta=7.6e-4;
@@ -21,7 +23,6 @@ dz=abs(z(2,1)-z(1,1));
 g=9.81;
 
 dbdz=v2rho_2d(((rho(1:end-1,:)-rho(2:end,:))./abs(dz))*-g./1025);
-
 
 %%%thermal wind
 
@@ -110,10 +111,17 @@ colorcon='k'
 load mld.mat
 mld=mld_CD;
 
+% mask_CD=mask_transion_CD+mask_s_front_CD.*2+mask_t_front_CD;
+mask1=abs(rho2-24.1)<pycnal/1;
+%%补充
+mask1(1:3,41:44)=1;
+
 % 创建第一个坐标系
 f1=axes('Position', [left, bot, width, height]); % 左下角坐标 (0.1, 0.7)，宽度和高度各为 0.25
 pcolor(x2,z2,dbdx2);shading interp;colorbar;hold on;
 contour(x2,z2,rho2,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color',colorcon);
+% contour(x2,z2,rho2,[24 24],'linewi',1.5,'linestyle','-','color',colorcon);
+contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','-','color',colorcon);
 plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5)
 colortable=textread('MPL_RdBu.txt');
 colormap(f1,flipud(colortable));
@@ -123,6 +131,9 @@ caxis([-2e-6 2e-6]);
 ylabel('depth [m]');
 text(1.5,-50,'M^{2}')
 text(17,5,'Transect CD','FontWeight','b')
+text(5,-20,'S front','FontWeight','b')
+text(12,-35,'transion zone','FontWeight','b')
+text(30,-20,'T front','FontWeight','b')
 % text(17,5,'Transect AB','FontWeight','b')
 set(gca,'xtick',[],'ytick',[-50 -30 -10])
 set(gca,'fontsize',10,'fontweight','b');
@@ -130,21 +141,27 @@ set(gca,'fontsize',10,'fontweight','b');
 f2=axes('Position', [left, bot-zpos*1, width, height]); 
 pcolor(x2,z2,log(dbdz2));shading interp;colorbar;hold on;
 contour(x2,z2,rho2,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color',colorcon);
+contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','-','color',colorcon);
 plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5)
 colortable=textread('MPL_BuGn.txt');
 colormap(f2,(colortable));
 caxis([-10 -4])
 ylabel('depth [m]');
 text(1.5,-50,'N^{2}')
+
 c=colorbar;
 % set(c,'ytick',[31 32.2 33.4])
 set(gca,'xtick',[],'ytick',[-50 -30 -10])
 set(gca,'fontsize',10,'fontweight','b');
 
+% N2_S_front=max(max(dbdz2(:,1:38)))
+% N2_T_front=max(max(dbdz2(:,39:end)))
+% plot(x2(:,1:38),z2(:,1:38))
 
 f3=axes('Position', [left, bot-zpos*2, width, height]); 
 pcolor(x2,z2,Ri_gradient);shading interp;colorbar;hold on;
 contour(x2,z2,rho2,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color',colorcon);
+contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','-','color',colorcon);
 plot(mld_CDx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5)
 colortable=textread('KH.txt');
 colormap(f3,colortable);
@@ -312,10 +329,15 @@ colorcon='k'
 load mld.mat
 mld=mld_AB;
 
+
+mask1=abs(rho2-24.2)<pycnal/1;
+%%补充
+mask1(1:2,52:63)=1;
 % 创建第一个坐标系
 f1=axes('Position', [left, bot, width, height]); % 左下角坐标 (0.1, 0.7)，宽度和高度各为 0.25
 pcolor(x2,z2,dbdx2);shading interp;colorbar;hold on;
 contour(x2,z2,rho2,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color',colorcon);
+contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','--','color',colorcon);
 plot(mld_ABx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5)
 colortable=textread('MPL_RdBu.txt');
 colormap(f1,flipud(colortable));
@@ -324,6 +346,9 @@ c=colorbar;
 caxis([-2e-6 2e-6]);
 ylabel('depth [m]');
 text(1.5,-50,'M^{2}')
+text(5,-20,'S front','FontWeight','b')
+text(21,-35,'transion zone','FontWeight','b')
+text(35,-20,'T front','FontWeight','b')
 % text(17,5,'Transect CD','FontWeight','b')
 text(17,5,'Transect AB','FontWeight','b')
 set(gca,'xtick',[],'ytick',[-50 -30 -10])
@@ -332,6 +357,7 @@ set(gca,'fontsize',10,'fontweight','b');
 f2=axes('Position', [left, bot-zpos*1, width, height]); 
 pcolor(x2,z2,log(dbdz2));shading interp;colorbar;hold on;
 contour(x2,z2,rho2,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color',colorcon);
+contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','--','color',colorcon);
 plot(mld_ABx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5)
 colortable=textread('MPL_BuGn.txt');
 colormap(f2,(colortable));
@@ -347,6 +373,7 @@ set(gca,'fontsize',10,'fontweight','b');
 f3=axes('Position', [left, bot-zpos*2, width, height]); 
 pcolor(x2,z2,Ri_gradient);shading interp;colorbar;hold on;
 contour(x2,z2,rho2,[22.5:pycnal:24],'linewi',.5,'linestyle','-','color',colorcon);
+contour(x2,z2,mask1,[1 1],'linewi',1.5,'linestyle','--','color',colorcon);
 plot(mld_ABx(1,:),mld,'color','r','linestyle','--','LineWidth',1.5)
 colortable=textread('KH.txt');
 colormap(f3,colortable);
