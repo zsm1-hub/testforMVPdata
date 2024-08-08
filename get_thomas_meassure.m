@@ -1,11 +1,13 @@
-function [GIm,GISIm,SIm,ISIm,Stablem]=get_thomas_meassure(Rib,xig,f);
-GIm=Rib;GIm(Rib<-1)=1;GIm(GIm~=1)=nan;
+function [GIm,GISIm,SIm,ISIm,Stablem]=get_thomas_meassure(N2,Rib,xig,f);
+GIm=(double(Rib<-1));GIm(GIm~=1)=nan;
 GISIm=(double(-1<Rib).*double(Rib<0));GISIm(GISIm~=1)=nan;
-SIm=double(xig<0).*double(Rib>0).*double(Rib<1)+...
-    double(xig>0).*double(Rib>0).*double(Rib<(f./xig));SIm(SIm~=1)=nan;
-ISIm=double(Rib>1).*double(Rib<(f./xig));ISIm(ISIm~=1)=nan;
-Stablem=double(Rib>(f./xig));
-
+SIm=double(N2>0).*double(xig<0).*double(Rib>0).*double(Rib<1)+...
+    double(N2>0).*double(xig>0).*double(Rib>0).*double(Rib<(f./(xig+f)));SIm(SIm~=1)=nan;
+ISIm=double(N2>0).*double(xig<0).*double(Rib>1).*double(Rib<(f./(xig+f)))+...
+    double(N2>0).*double(xig<0).*double(Rib>1).*double((xig+f)<0);ISIm(ISIm~=1)=nan;
+Stablem=double(N2>0).*double(xig<0).*double(Rib>(f./(xig+f))).*double((xig+f)>0)+...
+    double(N2>0).*double(xig>0).*double(Rib>(f./(f+xig)));
+% .*double((f./(xig+f))>1)
 % subplot(211)
 % hold on;
 % scatter(x2.*GIm,z2.*GIm,[],[0, 0.5, 0],"filled")
